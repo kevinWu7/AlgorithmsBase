@@ -1056,5 +1056,5 @@ dkms.conf
 
 # Built Visual Studio Code Extensions
 *.vsix
-
+*.dSYM
 
