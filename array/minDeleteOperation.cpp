@@ -17,50 +17,72 @@
 我们想 nums 中的最小元素可以整除 numsDivide 中的所有元素。
 没有任何办法可以达到这一目的。
 */
-#include<iostream>
-#include<vector>
-#include<map>
+#include <iostream>
+#include <vector>
+#include <map>
+#include <algorithm>
+using namespace std;
 class Solution
 {
-    public:
+public:
     //暴力解法：
     //先对nums排序
     //再对numsDivide循环，若全部能整除，则直接返回i
     //这个解法是非常低效的，10^5次方的数据，就耗时很久了
-    int minOperations(std::vector<int>& nums, std::vector<int>& numsDivide)
+    int minOperations(std::vector<int> &nums, std::vector<int> &numsDivide)
     {
-        std::sort(nums.begin(),nums.end());
-        int originLength=nums.size();
-        int divideLength=numsDivide.size();
-        int divideIndex=0;
-        for(int i=0;i<originLength;i++)
+        std::sort(nums.begin(), nums.end());
+        int originLength = nums.size();
+        int divideLength = numsDivide.size();
+        int divideIndex = 0;
+        for (int i = 0; i < originLength; i++)
         {
-            if(i>0 && nums[i] == nums[i - 1]) //若有重复，直接continue
+            if (i > 0 && nums[i] == nums[i - 1]) //若有重复，直接continue
             {
                 continue;
             }
-            divideIndex=0;
-            while(numsDivide[divideIndex]%nums[i]==0)
-            { 
+            divideIndex = 0;
+            while (numsDivide[divideIndex] % nums[i] == 0)
+            {
                 divideIndex++;
-                if(divideIndex==divideLength) //说明执行到了numsDivede的最后一个元素，即能完全整除
+                if (divideIndex == divideLength) //说明执行到了numsDivede的最后一个元素，即能完全整除
                 {
-                    return i;//i就是删除的index
+                    return i; // i就是删除的index
                     break;
                 }
             }
         }
         return -1;
     }
+    
+    //解法二：
+    //能被numDivide所有整除的最小数，其实就是被numsDivide的最大公约数n，能被n整除的最小数。
+    //故求最大公约数后，遍历即可
+    int minOperations1(std::vector<int> &nums, std::vector<int> &numsDivide)
+    {
+        int gcd = numsDivide[0];
+        for (int i = 0; i < numsDivide.size(); i++)
+        {
+            gcd = std::__algo_gcd(gcd, numsDivide[i]);
+        }
+        std::sort(nums.begin(), nums.end());
+        for(int index=0;index<nums.size();index++)
+        {
+            if(gcd%nums[index]==0)
+            {
+                return index;
+            }
+        }
+        return -1;
+    }
 };
-
-
 
 int main()
 {
     Solution solu;
-    std::vector<int> v1={2,3,3,3,3,3,3,3,3,2,4,3};
-    std::vector<int> v2={9,6,9,3,15};
-   auto count= solu.minDeleteOperation(v1,v2);
+    std::vector<int> v1 = {3,2,6,2,35,5,35,2,5,8,7,3,4};
+    std::vector<int> v2 = {105,70,70,175,105,105,105};
+    auto count = solu.minOperations1(v1, v2);
+    std::cout<<count<<std::endl;
     return 0;
 }
